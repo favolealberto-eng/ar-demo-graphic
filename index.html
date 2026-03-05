@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>EURIX - Demo Quadro Elettrico (DepthFix Definitivo)</title>
+    <title>EURIX - Demo Quadro Elettrico (Tracking HD & Zoom Persistente)</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
     
@@ -39,16 +39,12 @@
     </style>
 
     <script>
-      // 1. IL COMPONENTE INGEGNERISTICO PER RISOLVERE LO Z-FIGHTING
       AFRAME.registerComponent('always-on-top', {
         init: function () {
-          // Aspettiamo che il testo sia stato effettivamente generato dal motore
           this.el.addEventListener('textfontset', () => {
             const mesh = this.el.getObject3D('text');
             if (mesh && mesh.material) {
-              // Disattiviamo il controllo della profondità (esattamente come suggeriva l'altra chat)
               mesh.material.depthTest = false;
-              // Diamo una priorità di rendering altissima (equivalente al render-order="2")
               mesh.renderOrder = 999; 
             }
           });
@@ -87,8 +83,13 @@
           this.el.querySelector('.gruppo-pannelli').setAttribute('visible', 'false');
           this.el.addEventListener('markerFound', () => {
             visibleMarkers.add(this.el);
-            this.el.querySelector('.gruppo-pannelli').setAttribute('scale', '1 1 1');
-            currentScale = 1;
+            let gruppo = this.el.querySelector('.gruppo-pannelli');
+            
+            // FIX ZOOM: Riapplica la scala corrente invece di resettarla a 1
+            if(gruppo) {
+                gruppo.setAttribute('scale', `${currentScale} ${currentScale} ${currentScale}`);
+            }
+            
             checkVisibility();
           });
           this.el.addEventListener('markerLost', () => {
@@ -142,7 +143,7 @@
     </div>
 
     <a-scene embedded 
-             arjs="sourceType: webcam; detectionMode: mono_and_matrix; matrixCodeType: 3x3; debugUIEnabled: false;"
+             arjs="sourceType: webcam; detectionMode: mono_and_matrix; matrixCodeType: 3x3; debugUIEnabled: false; sourceWidth: 1280; sourceHeight: 720; displayWidth: 1280; displayHeight: 720;"
              renderer="antialias: true;">
       
       <a-assets>
@@ -150,7 +151,7 @@
         <img id="img-c" src="C.png">
       </a-assets>
 
-      <a-marker type="barcode" value="0" marker-handler smooth="true" smoothCount="15" smoothTolerance="0.04" smoothThreshold="5">
+      <a-marker type="barcode" value="1" marker-handler smooth="true" smoothCount="10" smoothTolerance="0.08" smoothThreshold="2">
         
         <a-entity rotation="-90 0 0">
           
