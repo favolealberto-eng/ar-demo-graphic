@@ -55,10 +55,15 @@
       let activeMarker = null;
       let currentScale = 1;
 
+
       const db_simulato = {
         "0": { 
             titolo: "QUADRO ELETTRICO Q-01", 
             dati: "STATO INTERRUTTORI:\n\n[ A ] FM Uffici Linea 2: ON (2.4 kW)\n[ B ] FM Sala Riunioni: ON (1.1 kW)\n[ C ] Sezioni A/B/C: OK\n\nAllarmi: NESSUNO\nManutenzione: Regolare" 
+        },
+        "1": { 
+            titolo: "NUOVA MACCHINA M-02", 
+            dati: "STATO: ATTIVO\nTemperatura: 45.2 °C\nPressione: 2.1 bar\n\nAllarmi: NESSUNO" 
         }
       };
 
@@ -112,8 +117,14 @@
         const markerId = activeMarker.getAttribute('value');
         const dati = db_simulato[markerId];
 
-        document.getElementById('hud-title').innerText = dati.titolo;
-        document.getElementById('hud-data').innerText = dati.dati;
+        // Se inquadri un marker che non è nel DB, la modale mostra un avviso invece di crashare
+        if (!dati) {
+            document.getElementById('hud-title').innerText = "DATI NON TROVATI";
+            document.getElementById('hud-data').innerText = "Marker ID " + markerId + " non presente nel database.";
+        } else {
+            document.getElementById('hud-title').innerText = dati.titolo;
+            document.getElementById('hud-data').innerText = dati.dati;
+        }
 
         document.getElementById('hud-modal').style.display = 'flex';
         document.getElementById('ui-container').style.display = 'none';
@@ -178,6 +189,7 @@
     </a-scene>
   </body>
 </html>
+
 
 
 
