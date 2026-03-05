@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>EURIX - Demo Quadro Elettrico (Texture UI)</title>
+    <title>EURIX - Demo Quadro Elettrico (DepthFix Definitivo)</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
     
@@ -39,6 +39,22 @@
     </style>
 
     <script>
+      // 1. IL COMPONENTE INGEGNERISTICO PER RISOLVERE LO Z-FIGHTING
+      AFRAME.registerComponent('always-on-top', {
+        init: function () {
+          // Aspettiamo che il testo sia stato effettivamente generato dal motore
+          this.el.addEventListener('textfontset', () => {
+            const mesh = this.el.getObject3D('text');
+            if (mesh && mesh.material) {
+              // Disattiviamo il controllo della profondità (esattamente come suggeriva l'altra chat)
+              mesh.material.depthTest = false;
+              // Diamo una priorità di rendering altissima (equivalente al render-order="2")
+              mesh.renderOrder = 999; 
+            }
+          });
+        }
+      });
+
       let visibleMarkers = new Set();
       let activeMarker = null;
       let currentScale = 1;
@@ -140,19 +156,16 @@
           
           <a-entity class="gruppo-pannelli">
             
-            <a-image src="#img-ab" position="-1.833 2.416 0.1" width="1.833" height="0.416">
-              <a-text value="FM Uffici\nLinea 2" position="0 0 0.08" align="center" color="#ffffff" width="1.7" wrapCount="10" lineHeight="55"></a-text>
-            </a-image>
+            <a-image src="#img-ab" position="-1.833 2.416 0.1" width="1.833" height="0.416"></a-image>
+            <a-text always-on-top value="FM Uffici\nLinea 2" position="-1.833 2.416 0.2" align="center" color="#ffffff" width="1.7" wrapCount="10" lineHeight="55"></a-text>
 
-            <a-image src="#img-ab" position="1.833 2.416 0.1" width="1.833" height="0.416">
-              <a-text value="FM Sala Riunioni\n+ Disimpegno" position="0 0 0.08" align="center" color="#ffffff" width="1.7" wrapCount="11" lineHeight="55"></a-text>
-            </a-image>
+            <a-image src="#img-ab" position="1.833 2.416 0.1" width="1.833" height="0.416"></a-image>
+            <a-text always-on-top value="FM Sala Riunioni\n+ Disimpegno" position="1.833 2.416 0.2" align="center" color="#ffffff" width="1.7" wrapCount="11" lineHeight="55"></a-text>
 
-            <a-image src="#img-c" position="0 5.667 0.1" width="5.5" height="0.416">
-              <a-text value="Sezione A" position="-1.833 0 0.08" align="center" color="#ffffff" width="1.7" wrapCount="10"></a-text>
-              <a-text value="Sezione B" position="0 0 0.08" align="center" color="#ffffff" width="1.7" wrapCount="10"></a-text>
-              <a-text value="Sezione C" position="1.833 0 0.08" align="center" color="#ffffff" width="1.7" wrapCount="10"></a-text>
-            </a-image>
+            <a-image src="#img-c" position="0 5.667 0.1" width="5.5" height="0.416"></a-image>
+            <a-text always-on-top value="Sezione A" position="-1.833 5.667 0.2" align="center" color="#ffffff" width="1.7" wrapCount="10"></a-text>
+            <a-text always-on-top value="Sezione B" position="0 5.667 0.2" align="center" color="#ffffff" width="1.7" wrapCount="10"></a-text>
+            <a-text always-on-top value="Sezione C" position="1.833 5.667 0.2" align="center" color="#ffffff" width="1.7" wrapCount="10"></a-text>
 
           </a-entity>
 
@@ -163,4 +176,3 @@
     </a-scene>
   </body>
 </html>
-
